@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import path from 'path';
-
+import fetch from 'node-fetch';
 import cheerio from 'cheerio';
 
 dotenv.config();
