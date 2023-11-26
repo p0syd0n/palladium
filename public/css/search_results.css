@@ -1,0 +1,27 @@
+body {
+  background-color: rgb(67, 67, 67);
+  color: rgb(255, 255, 255)
+}
+
+.url {
+  font-family: 'Times New Roman', Times, serif;
+  color: rgb(195, 129, 129)
+}
+
+.url:hover {
+  text-decoration: none;
+}
+
+.main-input {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  background-color: rgb(123, 123, 123);
+  color: black
+}
+
+.main-input:focus {
+  background-color: rgb(255, 255, 254);
+  border: 3px solid #555;
+}

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Search: <%= query %></title>
+    <link rel="stylesheet" href="css/search_results.css">
+  </head>
+  <body>
+    <h1>YellowBomb</h1>
+    <div class="search-box-div" id="search-box-div">
+      <form action="/search">
+        <input name="q" class="main-input" id="main-input" value="<%= query %>"></input>
+      </form>
+    </div>
+    <div id="main-results">
+      <% for (let result of results) { %>
+        <div id="<%= result.title %>">
+          <h3><a href="https://<%= result.url %>" class="url" ><%= result.title %></a></h3>
+          <p><%= result.description %></p>
+          <br><br>
+        </div>
+      <% } %>
+    </div>
+  </body>
+</html>
