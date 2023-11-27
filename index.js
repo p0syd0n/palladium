@@ -12,11 +12,44 @@ const __dirname = path.dirname(__filename);
 
 const port = process.env.PORT;
 const app = express();
+const headers = {
+  'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:84.0) Gecko/20100101 Firefox/84.0",
+  'X-Forwarded-For': "cheesemoose"
+}
+
+async function bing(query) {
+    const response = await fetch(`https://www.bing.com/search?q=${query}&qs=n}`, {headers: headers});
+    if (!response.ok) console.error(`Failed to fetch search results. Status: ${response.status}`);
+
+    const html = await response.text();
+
+    // Load the HTML content into Cheerio
+    const $ = cheerio.load(html);
+  
+    // Select all elements with class "b_algo"
+    const bAlgoElements = $('.b_algo');
+  
+    // Create an array to store the extracted data
+    const resultArray = [];
+  
+    // Iterate through each b_algo element
+    bAlgoElements.each((index, bAlgoElement) => {
+      // Extract relevant information from the element
+      const title = $(bAlgoElement).find('h2 a').text();
+      const url = $(bAlgoElement).find('h2 a').attr('href');
+      const description = $(bAlgoElement).find('.b_caption p').text();
+  
+      // Push the extracted data as an object to the result array
+      resultArray.push({ title, url, description });
+    });
+  
+    return resultArray;
+  }
 
 async function duckDuckGo(query) {
     try {
-        const response = await fetch(`https://html.duckduckgo.com/html/?q=${query}`);
-        if (!response.ok) throw new Error(`Failed to fetch search results. Status: ${response.status}`);
+        const response = await fetch(`https://html.duckduckgo.com/html/?q=${query}`, {headers: headers});
+        if (!response.ok) console.error(`Failed to fetch search results. Status: ${response.status}`);
 
         const html = await response.text();
         const $ = cheerio.load(html);
@@ -40,6 +73,7 @@ async function duckDuckGo(query) {
 
 async function collectSearchResults(query) {
   const duckDuckGoResults = await duckDuckGo(query);
+  const bingResults = await bing(query);
   // Add more functions for other search engines or sources
   // const googleResults = await getGoogleResults(query);
   // const bingResults = await getBingResults(query);
@@ -47,6 +81,7 @@ async function collectSearchResults(query) {
   // Format results from different sources
   const formattedResults = [
       ...duckDuckGoResults.map(({ title, url, description }) => ({ title, url, description })),
+      ...bingResults.map(({ title, url, description }) => ({ title, url, description })),
       // Add formatted results for other sources
       // ...googleResults.map(({ title, url, description }) => ({ title, url, description })),
       // ...bingResults.map(({ title, url, description }) => ({ title, url, description })),
@@ -76,5 +111,7 @@ app.get('/search', async (req, res) => {
 });
 
 app.listen(port, async () => {
+    let bingr = await duckDuckGo('beans');
+    console.log(bingr);
   console.log(`Server started on port ${port}`);
 });
