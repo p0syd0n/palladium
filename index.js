@@ -28,6 +28,7 @@ function shuffleArray(array) {
   return array
 }
 
+//functions to scrape search engines
 async function searx(query) {
   const response = await fetch(`https://wai.137900.xyz/search?q=${query}`, {headers: headers});
   if (!response.ok) console.error(`Failed to fetch search results. Status: ${response.status}`);
@@ -109,6 +110,7 @@ async function duckDuckGo(query) {
     }
 }
 
+//call scraping functions and compile to one list
 async function collectSearchResults(query) {
   try {
     const [duckDuckGoResults, bingResults, searxResults] = await Promise.all([
@@ -132,7 +134,7 @@ async function collectSearchResults(query) {
   }
 }
 
-
+//begin server configs
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.set('views', path.join(__dirname, 'public', 'views'));
@@ -149,7 +151,7 @@ app.get('/search', async (req, res) => {
         res.render('search_results', { results, query: req.query.q });
     } catch (error) {
         console.error('Error collecting search results:', error.message);
-        res.status(500).send('Internal Server Error');
+        res.status(500).send('Internal Server Error <br> THIS IS NOT YOUR FAULT; just go back and try again. <br>');
     }
 });
 
