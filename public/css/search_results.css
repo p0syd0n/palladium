@@ -33,3 +33,9 @@ body {
 .engine {
   color: (rgb(255, 203, 203), 0, 0)
 }
+
+.google-images-link {
+  font-family: 'Times New Roman', Times, serif;
+  color: rgb(255, 171, 171);
+  text-decoration: none;
+}

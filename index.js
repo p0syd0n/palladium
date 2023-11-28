@@ -119,10 +119,10 @@ async function collectSearchResults(query) {
 
     // Format results from different sources
     const formattedResults = [
-      ...duckDuckGoResults.map(({ title, url, description }) => ({ title, url, description, engine: 'duckDuckGo' })),
-      ...bingResults.map(({ title, url, description }) => ({ title, url, description, engine: 'bing' })),
+      ...duckDuckGoResults.map(({ title, url, description }) => ({ title, url, description, engine: 'Duck Duck Go' })),
+      ...bingResults.map(({ title, url, description }) => ({ title, url, description, engine: 'Bing' })),
       ...searxResults.map(({ title, url, description }) => ({ title, url, description, engine: 
-      'searx' })),
+      'Searx' })),
     ];
 
     return shuffleArray(formattedResults);
