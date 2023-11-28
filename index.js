@@ -101,25 +101,27 @@ async function duckDuckGo(query) {
 }
 
 async function collectSearchResults(query) {
-  const duckDuckGoResults = await duckDuckGo(query);
-  const bingResults = await bing(query);
-  const searxResults = await searx(query);
-  // Add more functions for other search engines or sources
-  // const googleResults = await getGoogleResults(query);
-  // const bingResults = await getBingResults(query);
+  try {
+    const [duckDuckGoResults, bingResults, searxResults] = await Promise.all([
+      duckDuckGo(query),
+      bing(query),
+      searx(query),
+    ]);
 
-  // Format results from different sources
-  const formattedResults = [
+    // Format results from different sources
+    const formattedResults = [
       ...duckDuckGoResults.map(({ title, url, description }) => ({ title, url, description })),
       ...bingResults.map(({ title, url, description }) => ({ title, url, description })),
       ...searxResults.map(({ title, url, description }) => ({ title, url, description })),
-      // Add formatted results for other sources
-      // ...googleResults.map(({ title, url, description }) => ({ title, url, description })),
-      // ...bingResults.map(({ title, url, description }) => ({ title, url, description })),
-  ];
+    ];
 
-  return formattedResults;
+    return formattedResults;
+  } catch (error) {
+    console.error('Error collecting search results:', error.message);
+    throw error;
+  }
 }
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
