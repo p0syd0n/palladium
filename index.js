@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import fetch from 'node-fetch';
 import cheerio from 'cheerio';
+import fs from 'fs';
 
 dotenv.config();
 
@@ -17,38 +18,66 @@ const headers = {
   'X-Forwarded-For': "cheesemoose"
 }
 
-async function bing(query) {
-    const response = await fetch(`https://www.bing.com/search?q=${query}&qs=n}`, {headers: headers});
-    if (!response.ok) console.error(`Failed to fetch search results. Status: ${response.status}`);
 
-    const html = await response.text();
+async function searx(query) {
+  const response = await fetch(`https://wai.137900.xyz/search?q=${query}`, {headers: headers});
+  if (!response.ok) console.error(`Failed to fetch search results. Status: ${response.status}`);
 
-    // Load the HTML content into Cheerio
-    const $ = cheerio.load(html);
-  
-    // Select all elements with class "b_algo"
-    const bAlgoElements = $('.b_algo');
-  
-    // Create an array to store the extracted data
-    const resultArray = [];
-  
-    // Iterate through each b_algo element
-    bAlgoElements.each((index, bAlgoElement) => {
-      // Extract relevant information from the element
-      const title = $(bAlgoElement).find('h2 a').text();
-      const url = $(bAlgoElement).find('h2 a').attr('href');
-      const description = $(bAlgoElement).find('.b_caption p').text();
-  
-      // Push the extracted data as an object to the result array
-      resultArray.push({ title, url, description });
+  const html = await response.text();
+
+  // Load the HTML content into Cheerio
+  const $ = cheerio.load(html);
+
+  const results = [];
+
+  // Iterate over each article element
+  $('article.result').each((index, element) => {
+    const url = $(element).find('a.url_wrapper').attr('href').trim();
+    const title = $(element).find('h3 a').text().trim();
+    const description = $(element).find('p.content').text().trim();
+
+    results.push({
+      url,
+      title,
+      description,
     });
-  
-    return resultArray;
-  }
+  });
+
+  return results;
+}
+
+async function bing(query) {
+  const response = await fetch(`https://www.bing.com/search?q=${query}&qs=n}`, {headers: headers});
+  if (!response.ok) console.error(`Failed to fetch search results. Status: ${response.status}`);
+
+  const html = await response.text();
+
+  // Load the HTML content into Cheerio
+  const $ = cheerio.load(html);
+
+  // Select all elements with class "b_algo"
+  const bAlgoElements = $('.b_algo');
+
+  // Create an array to store the extracted data
+  const resultArray = [];
+
+  // Iterate through each b_algo element
+  bAlgoElements.each((index, bAlgoElement) => {
+    // Extract relevant information from the element
+    const title = $(bAlgoElement).find('h2 a').text();
+    const url = $(bAlgoElement).find('h2 a').attr('href');
+    const description = $(bAlgoElement).find('.b_caption p').text().substring(3);
+
+    // Push the extracted data as an object to the result array
+    resultArray.push({ title, url, description });
+  });
+
+  return resultArray;
+}
 
 async function duckDuckGo(query) {
     try {
-        const response = await fetch(`https://html.duckduckgo.com/html/?q=${query}`, {headers: headers});
+        const response = await fetch(`https://html.duckduckgo.com/html/?q=${query}/`, {headers: headers});
         if (!response.ok) console.error(`Failed to fetch search results. Status: ${response.status}`);
 
         const html = await response.text();
@@ -74,6 +103,7 @@ async function duckDuckGo(query) {
 async function collectSearchResults(query) {
   const duckDuckGoResults = await duckDuckGo(query);
   const bingResults = await bing(query);
+  const searxResults = await searx(query);
   // Add more functions for other search engines or sources
   // const googleResults = await getGoogleResults(query);
   // const bingResults = await getBingResults(query);
@@ -82,6 +112,7 @@ async function collectSearchResults(query) {
   const formattedResults = [
       ...duckDuckGoResults.map(({ title, url, description }) => ({ title, url, description })),
       ...bingResults.map(({ title, url, description }) => ({ title, url, description })),
+      ...searxResults.map(({ title, url, description }) => ({ title, url, description })),
       // Add formatted results for other sources
       // ...googleResults.map(({ title, url, description }) => ({ title, url, description })),
       // ...bingResults.map(({ title, url, description }) => ({ title, url, description })),
@@ -111,7 +142,18 @@ app.get('/search', async (req, res) => {
 });
 
 app.listen(port, async () => {
-    let bingr = await duckDuckGo('beans');
-    console.log(bingr);
+  //let duck = await searx('test');
+  //let text = await duck.text();
+  //console.log(duck);
+  
+  // fs.writeFile('searx.html', text, (err) => {
+  //    if (err) {
+  //        console.error('Error writing file', err);
+  //    } else {
+  //        console.log('File has been saved!');
+  //    }
+  // });
+  
   console.log(`Server started on port ${port}`);
 });
+//https://wai.137900.xyz/search?q=test
