@@ -42,7 +42,7 @@ async function searx(query) {
 
   // Iterate over each article element
   $('article.result').each((index, element) => {
-    const url = $(element).find('a.url_wrapper').attr('href').trim();
+    const url = $(element).find('a.url_wrapper').attr('href').trim().split('www.')[1];
     const title = $(element).find('h3 a').text().trim();
     const description = $(element).find('p.content').text().trim();
 

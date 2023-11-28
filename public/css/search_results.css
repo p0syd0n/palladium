@@ -14,15 +14,16 @@ body {
 
 .main-input {
   width: 100%;
-  padding: 12px 20px;
+  padding: 10px 10px;
   margin: 8px 0;
   box-sizing: border-box;
   background-color: rgb(123, 123, 123);
-  color: black
+  color: black;
+  max-width: 75%
 }
 
 .main-input:focus {
-  background-color: rgb(255, 255, 254);
+  background-color: rgb(183, 183, 183);
   border: 3px solid #555;
 }
 
