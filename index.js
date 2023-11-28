@@ -18,6 +18,15 @@ const headers = {
   'X-Forwarded-For': "cheesemoose"
 }
 
+function shuffleArray(array) {
+  for (var i = array.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+  }
+  return array
+}
 
 async function searx(query) {
   const response = await fetch(`https://wai.137900.xyz/search?q=${query}`, {headers: headers});
@@ -110,12 +119,13 @@ async function collectSearchResults(query) {
 
     // Format results from different sources
     const formattedResults = [
-      ...duckDuckGoResults.map(({ title, url, description }) => ({ title, url, description })),
-      ...bingResults.map(({ title, url, description }) => ({ title, url, description })),
-      ...searxResults.map(({ title, url, description }) => ({ title, url, description })),
+      ...duckDuckGoResults.map(({ title, url, description }) => ({ title, url, description, engine: 'duckDuckGo' })),
+      ...bingResults.map(({ title, url, description }) => ({ title, url, description, engine: 'bing' })),
+      ...searxResults.map(({ title, url, description }) => ({ title, url, description, engine: 
+      'searx' })),
     ];
 
-    return formattedResults;
+    return shuffleArray(formattedResults);
   } catch (error) {
     console.error('Error collecting search results:', error.message);
     throw error;

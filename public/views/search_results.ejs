@@ -15,7 +15,8 @@
       <% for (let result of results) { %>
         <div id="<%= result.title %>">
           <h3><a href="https://<%= result.url %>" class="url" ><%= result.title %></a></h3>
-          <p><%= result.description %></p>
+          <p class="description" ><%= result.description %></p>
+          <p class="engine" ><%= result.engine %></p>
           <br><br>
         </div>
       <% } %>

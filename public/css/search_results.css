@@ -25,3 +25,11 @@ body {
   background-color: rgb(255, 255, 254);
   border: 3px solid #555;
 }
+
+.description {
+  max-width: 55%;
+}
+
+.engine {
+  color: (rgb(255, 203, 203), 0, 0)
+}
